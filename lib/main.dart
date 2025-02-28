@@ -24,18 +24,22 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmationController = TextEditingController();
 
   void _register() {
     if (_formKey.currentState!.validate()) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => UserInfoPage(
-          name: _nameController.text,
-          email: _emailController.text,
-          password: _passwordController.text,
-        )),
+        MaterialPageRoute(
+            builder: (context) => UserInfoPage(
+                  name: _nameController.text,
+                  phone: _phoneController.text,
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                )),
       );
     }
   }
@@ -62,6 +66,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
+                  controller: _phoneController,
+                  decoration: const InputDecoration(labelText: 'Phone Number'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty || value.length < 10) {
+                      return 'Введите корректный Phone Number';
+                    }
+                    return null;
+                  }),
+              const SizedBox(height: 16),
+              TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
@@ -77,8 +91,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 decoration: const InputDecoration(labelText: 'Пароль'),
                 obscureText: true,
                 validator: (value) {
-                  if (value == null || value.length < 6) {
+                  if (value == null || value.length < 6 || value.isEmpty) {
                     return 'Пароль должен содержать минимум 6 символов';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _confirmationController,
+                decoration:
+                    const InputDecoration(labelText: 'Подтверждение пароля'),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.length < 6 || value.isEmpty) {
+                    return 'Введите пароль повторно';
+                  } else if (value != _passwordController.text) {
+                    return 'Пароли не совпадают';
                   }
                   return null;
                 },
@@ -95,37 +124,45 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 }
+
 class UserInfoPage extends StatelessWidget {
   final String name;
+  final String phone;
   final String email;
   final String password;
-
-  UserInfoPage({required this.name, required this.email, required this.password});
+  UserInfoPage(
+      {required this.name,
+      required this.phone,
+      required this.email,
+      required this.password});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Информация о пользователе')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Имя: $name', style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 8),
-            Text('Email: $email', style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 8),
-            Text('Password: $password', style: const TextStyle(fontSize: 18, color: Colors.red)),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: (){
-                Navigator.pop(context);
-              },
-              child: const Text('Назад'),
-            ),
-          ],
-        )
-      ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Имя: $name', style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 8),
+              Text('Phone Number: $phone',
+                  style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 8),
+              Text('Email: $email', style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 8),
+              Text('Password: $password',
+                  style: const TextStyle(fontSize: 18, color: Colors.red)),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Назад'),
+              ),
+            ],
+          )),
     );
   }
 }

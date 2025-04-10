@@ -29,6 +29,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmationController = TextEditingController();
 
+  final FocusNode _nameFocus = FocusNode();
+  final FocusNode _phoneFocus = FocusNode();
+  final FocusNode _emailFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
+  final FocusNode _confirmationFocus = FocusNode();
+
+  @override
+  void dispose() {
+    // Освобождаем память
+    _nameFocus.dispose();
+    _phoneFocus.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
+    _confirmationFocus.dispose();
+    super.dispose();
+  }
+
   void _register() {
     if (_formKey.currentState!.validate()) {
       Navigator.push(
@@ -47,6 +64,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(title: const Text('Registration form')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -56,7 +74,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             children: [
               TextFormField(
                 controller: _nameController,
+                focusNode: _nameFocus,
                 decoration: const InputDecoration(labelText: 'Full Name'),
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) {
+                  FocusScope.of(context).requestFocus(_phoneFocus);
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Введите корректный Full Name';
@@ -67,6 +90,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(height: 16),
               TextFormField(
                   controller: _phoneController,
+                  focusNode: _phoneFocus,
                   decoration: const InputDecoration(labelText: 'Phone Number'),
                   validator: (value) {
                     if (value == null || value.isEmpty || value.length < 10) {
@@ -77,6 +101,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
+                focusNode: _emailFocus,
                 decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty || !value.contains('@')) {
@@ -88,6 +113,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _passwordController,
+                focusNode: _passwordFocus,
                 decoration: const InputDecoration(labelText: 'Пароль'),
                 obscureText: true,
                 validator: (value) {
@@ -100,6 +126,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _confirmationController,
+                focusNode: _confirmationFocus,
                 decoration:
                     const InputDecoration(labelText: 'Подтверждение пароля'),
                 obscureText: true,

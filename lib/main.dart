@@ -1,7 +1,25 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [Locale('en'), Locale('ru')],
+      path: 'assets/langs',
+      fallbackLocale: const Locale('en'),
+      child: ScreenUtilInit(
+        designSize: Size(375, 812), // размер макета, например, iPhone X
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return const MyApp();
+        },
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,7 +29,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const MainScreen(), // заменили на контейнер
+      title: 'LAB 7',
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: const MainScreen(),
     );
   }
 }
@@ -61,15 +83,27 @@ class _MainScreenState extends State<MainScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Demo App")),
+      appBar: AppBar(
+        title: Text('app_title'.tr()),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.language),
+            onPressed: () {
+              final locale = context.locale.languageCode == 'en'
+                  ? const Locale('ru')
+                  : const Locale('en');
+              context.setLocale(locale);
+            },
+          ),
+        ],
+      ),
       body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          // Чтобы не перейти на профиль без заполнения формы
           if (index == 1 && _nameController.text.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Пожалуйста, зарегистрируйтесь")),
+              SnackBar(content: Text('require_registration'.tr())),
             );
             return;
           }
@@ -77,9 +111,10 @@ class _MainScreenState extends State<MainScreen> {
             _currentIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'.tr()),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person), label: 'profile'.tr()),
         ],
       ),
     );
@@ -87,48 +122,51 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildRegistrationForm() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.w),
       child: Form(
         key: _formKey,
         child: Column(
           children: [
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Full Name'),
-              validator: (value) => value!.isEmpty ? 'Введите имя' : null,
+              decoration: InputDecoration(labelText: 'full_name'.tr()),
+              validator: (value) =>
+                  value!.isEmpty ? 'name_required'.tr() : null,
             ),
+            SizedBox(height: 12.h),
             TextFormField(
               controller: _phoneController,
-              decoration: const InputDecoration(labelText: 'Phone Number'),
-              validator: (value) =>
-                  value!.length < 10 ? 'Введите корректный номер' : null,
+              decoration: InputDecoration(labelText: 'phone'.tr()),
+              validator: (value) => value!.length < 10 ? 'phone_invalid' : null,
             ),
+            SizedBox(height: 12.h),
             TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: InputDecoration(labelText: 'email'.tr()),
               validator: (value) =>
-                  !value!.contains('@') ? 'Введите корректный email' : null,
+                  !value!.contains('@') ? 'email_invalid'.tr() : null,
             ),
+            SizedBox(height: 12.h),
             TextFormField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Пароль'),
+              decoration: InputDecoration(labelText: 'password'.tr()),
               obscureText: true,
               validator: (value) =>
-                  value!.length < 6 ? 'Минимум 6 символов' : null,
+                  value!.length < 6 ? 'password_short'.tr() : null,
             ),
+            SizedBox(height: 12.h),
             TextFormField(
               controller: _confirmationController,
-              decoration:
-                  const InputDecoration(labelText: 'Подтверждение пароля'),
+              decoration: InputDecoration(labelText: 'confirm_password'.tr()),
               obscureText: true,
               validator: (value) => value != _passwordController.text
-                  ? 'Пароли не совпадают'
+                  ? 'password_mismatch'.tr()
                   : null,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             ElevatedButton(
               onPressed: _register,
-              child: const Text('Зарегистрироваться'),
+              child: Text('register'.tr()),
             ),
           ],
         ),
@@ -138,21 +176,21 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildUserInfoPage() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Имя: ${_nameController.text}',
-              style: const TextStyle(fontSize: 18)),
-          const SizedBox(height: 8),
-          Text('Телефон: ${_phoneController.text}',
-              style: const TextStyle(fontSize: 18)),
-          const SizedBox(height: 8),
-          Text('Email: ${_emailController.text}',
-              style: const TextStyle(fontSize: 18)),
-          const SizedBox(height: 8),
-          Text('Пароль: ${_passwordController.text}',
-              style: const TextStyle(fontSize: 18, color: Colors.red)),
+          Text('name'.tr() + ': ' + '${_nameController.text}',
+              style: TextStyle(fontSize: 18.sp)),
+          SizedBox(height: 8),
+          Text('phone_display'.tr() + ': ' + '${_phoneController.text}',
+              style: TextStyle(fontSize: 18.sp)),
+          SizedBox(height: 8),
+          Text('email_display'.tr() + ': ' + '${_emailController.text}',
+              style: TextStyle(fontSize: 18.sp)),
+          SizedBox(height: 8),
+          Text('password_display'.tr() + ': ' + '${_passwordController.text}',
+              style: TextStyle(fontSize: 18.sp, color: Colors.red)),
         ],
       ),
     );

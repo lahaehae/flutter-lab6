@@ -1,0 +1,24 @@
+{
+    "app_title": "Демо Приложение",
+    "home": "Главная",
+    "profile": "Профиль",
+    "register": "Регистрация",
+    "full_name": "Полное имя",
+    "phone": "Номер телефона",
+    "email": "Электронная почта",
+    "password": "Пароль",
+    "confirm_password": "Подтвердите пароль",
+    "register_button": "Зарегистрироваться",
+    "name_required": "Введите имя",
+    "phone_invalid": "Введите корректный номер",
+    "email_invalid": "Введите корректный email",
+    "password_short": "Минимум 6 символов",
+    "password_mismatch": "Пароли не совпадают",
+    "please_register": "Пожалуйста, зарегистрируйтесь",
+    "name": "Имя",
+    "phone_display": "Телефон",
+    "email_display": "Почта",
+    "password_display": "Пароль",
+    "require_registration": "Пожалуйста, зарегистрируйтесь"
+  }
+  

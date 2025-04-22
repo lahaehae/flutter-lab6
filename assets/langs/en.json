@@ -1,0 +1,24 @@
+{
+    "app_title": "Demo App",
+    "home": "Home",
+    "profile": "Profile",
+    "register": "Register",
+    "full_name": "Full Name",
+    "phone": "Phone Number",
+    "email": "Email",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "register_button": "Register",
+    "name_required": "Please enter your name",
+    "phone_invalid": "Enter a valid phone number",
+    "email_invalid": "Enter a valid email",
+    "password_short": "Minimum 6 characters",
+    "password_mismatch": "Passwords do not match",
+    "please_register": "Please register first",
+    "name": "Name",
+    "phone_display": "Phone",
+    "email_display": "Email",
+    "password_display": "Password",
+    "require_registration": "Please register before"
+  }
+  
